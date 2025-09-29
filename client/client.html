@@ -1,0 +1,214 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Movie API Test Application</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+
+  <script>
+    const init = () => {
+      // Toggle endpoint sections
+      const endpointHeaders = document.querySelectorAll('.endpoint-header');
+      endpointHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+          const endpoint = header.parentElement;
+          const testSection = endpoint.querySelector('.test-section');
+          if (testSection) {
+            testSection.classList.toggle('expanded');
+          }
+        });
+      });
+
+      // Handle form submissions
+      const sendButtons = document.querySelectorAll('.send-request');
+      sendButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const form = button.closest('form');
+          const endpoint = button.closest('.endpoint');
+          const resultDiv = endpoint.querySelector('.result');
+          const endpointPath = endpoint.querySelector('.endpoint-path').textContent;
+
+          // Get form data
+          const inputs = form.querySelectorAll('input[type="text"]');
+          const methodRadios = form.querySelectorAll('input[name^="method"]');
+
+          let method = 'GET';
+          methodRadios.forEach(radio => {
+            if (radio.checked) method = radio.value;
+          });
+
+          // Build URL with query params
+          let url = endpointPath;
+          const params = new URLSearchParams();
+          inputs.forEach(input => {
+            if (input.value) {
+              params.append(input.name, input.value);
+            }
+          });
+          if (params.toString()) url += '?' + params.toString();
+
+          // Make request
+          fetch(url, { method })
+            .then(response => response.text())
+            .then(data => {
+              resultDiv.textContent = data;
+            })
+            .catch(error => {
+              resultDiv.textContent = `Error: ${error}`;
+            });
+        });
+      });
+    };
+
+    window.onload = init;
+  </script>
+</head>
+
+<body>
+  <div class="header-links">
+    <a href="/test">Test the Application Here</a>
+    <a href="/docs">View the Documentation Here</a>
+  </div>
+
+  <h1>Movie API Test Application</h1>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="endpoint-path">/api/getFilmTitles</span>
+      <span class="method get">GET</span>
+      <span class="method head">HEAD</span>
+    </div>
+    <div class="test-section">
+      <h2>Test This Endpoint</h2>
+      <form>
+        <label>
+          Actor: <input type="text" name="actor">
+        </label>
+        <label>
+          Year: <input type="text" name="year">
+        </label>
+        <div class="radio-group">
+          <label><input type="radio" name="method-1" value="GET" checked> GET</label>
+          <label><input type="radio" name="method-1" value="HEAD"> HEAD</label>
+        </div>
+        <button type="button" class="send-request">Send Request</button>
+      </form>
+      <div class="result"></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="endpoint-path">/api/getFilms</span>
+      <span class="method get">GET</span>
+      <span class="method head">HEAD</span>
+    </div>
+    <div class="test-section">
+      <h2>Test This Endpoint</h2>
+      <form>
+        <label>
+          Actor: <input type="text" name="actor">
+        </label>
+        <label>
+          Year: <input type="text" name="year">
+        </label>
+        <div class="radio-group">
+          <label><input type="radio" name="method-2" value="GET" checked> GET</label>
+          <label><input type="radio" name="method-2" value="HEAD"> HEAD</label>
+        </div>
+        <button type="button" class="send-request">Send Request</button>
+      </form>
+      <div class="result"></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="endpoint-path">/api/getFilm</span>
+      <span class="method get">GET</span>
+      <span class="method head">HEAD</span>
+    </div>
+    <div class="test-section">
+      <h2>Test This Endpoint</h2>
+      <form>
+        <label>
+          Title: <input type="text" name="title">
+        </label>
+        <div class="radio-group">
+          <label><input type="radio" name="method-3" value="GET" checked> GET</label>
+          <label><input type="radio" name="method-3" value="HEAD"> HEAD</label>
+        </div>
+        <button type="button" class="send-request">Send Request</button>
+      </form>
+      <div class="result"></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="endpoint-path">/api/getAllFilms</span>
+      <span class="method get">GET</span>
+      <span class="method head">HEAD</span>
+    </div>
+    <div class="test-section">
+      <h2>Test This Endpoint</h2>
+      <form>
+        <div class="radio-group">
+          <label><input type="radio" name="method-4" value="GET" checked> GET</label>
+          <label><input type="radio" name="method-4" value="HEAD"> HEAD</label>
+        </div>
+        <button type="button" class="send-request">Send Request</button>
+      </form>
+      <div class="result"></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="endpoint-path">/api/addFilm</span>
+      <span class="method post">POST</span>
+    </div>
+    <div class="test-section">
+      <h2>Test This Endpoint</h2>
+      <form>
+        <label>
+          Title: <input type="text" name="title">
+        </label>
+        <label>
+          Year: <input type="text" name="year">
+        </label>
+        <label>
+          Actor: <input type="text" name="actor">
+        </label>
+        <button type="button" class="send-request">Send Request</button>
+      </form>
+      <div class="result"></div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="endpoint-header">
+      <span class="endpoint-path">/api/rateFilm</span>
+      <span class="method post">POST</span>
+    </div>
+    <div class="test-section">
+      <h2>Test This Endpoint</h2>
+      <form>
+        <label>
+          Title: <input type="text" name="title">
+        </label>
+        <label>
+          Rating: <input type="text" name="rating">
+        </label>
+        <button type="button" class="send-request">Send Request</button>
+      </form>
+      <div class="result"></div>
+    </div>
+  </div>
+
+  <footer>
+    Yuri Korolev - 2025 - IGME 430 Project 1
+  </footer>
+</body>
+
+</html>

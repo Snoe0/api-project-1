@@ -1,0 +1,159 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+body {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-links {
+  margin-bottom: 20px;
+}
+
+.header-links a {
+  color: #0066cc;
+  text-decoration: underline;
+  margin-right: 20px;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin: 20px 0;
+}
+
+h2 {
+  font-size: 1.3em;
+  margin: 15px 0;
+}
+
+.endpoint {
+  background-color: #e8e8e8;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px 20px;
+  margin: 10px 0;
+}
+
+.endpoint-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.endpoint-header:hover {
+  background-color: #d8d8d8;
+  margin: -5px -10px;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.endpoint-path {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.method {
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.method.get {
+  color: #0066cc;
+}
+
+.method.head {
+  color: #6666cc;
+}
+
+.method.post {
+  color: #cc0066;
+}
+
+.test-section {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0;
+  margin: 10px 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.test-section.expanded {
+  max-height: 500px;
+  padding: 20px;
+}
+
+.test-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+
+.test-section label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.test-section input[type="text"] {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #999;
+  border-radius: 3px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 15px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #999;
+  border-radius: 3px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+button:hover {
+  background-color: #f0f0f0;
+}
+
+.result {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background-color: #fafafa;
+  min-height: 40px;
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+
+footer {
+  text-align: right;
+  margin-top: 40px;
+  padding-top: 20px;
+  color: #666;
+}
