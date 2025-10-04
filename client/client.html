@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Movie API Test Application</title>
+  <title>SP500 Companies API Test Application</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
 
   <script>
@@ -70,23 +70,18 @@
     <a href="/docs">View the Documentation Here</a>
   </div>
 
-  <h1>Movie API Test Application</h1>
+  <h1>SP500 Companies API Test Application</h1>
 
   <div class="endpoint">
     <div class="endpoint-header">
-      <span class="endpoint-path">/api/getFilmTitles</span>
+      <span class="endpoint-path">/api/getAllCompanies</span>
       <span class="method get">GET</span>
       <span class="method head">HEAD</span>
     </div>
     <div class="test-section">
       <h2>Test This Endpoint</h2>
+      <p>Get all SP500 companies with their ticker and name.</p>
       <form>
-        <label>
-          Actor: <input type="text" name="actor">
-        </label>
-        <label>
-          Year: <input type="text" name="year">
-        </label>
         <div class="radio-group">
           <label><input type="radio" name="method-1" value="GET" checked> GET</label>
           <label><input type="radio" name="method-1" value="HEAD"> HEAD</label>
@@ -99,18 +94,16 @@
 
   <div class="endpoint">
     <div class="endpoint-header">
-      <span class="endpoint-path">/api/getFilms</span>
+      <span class="endpoint-path">/api/getCompaniesBySector</span>
       <span class="method get">GET</span>
       <span class="method head">HEAD</span>
     </div>
     <div class="test-section">
       <h2>Test This Endpoint</h2>
+      <p>Get companies filtered by sector (e.g., Technology, Healthcare, Financials).</p>
       <form>
         <label>
-          Actor: <input type="text" name="actor">
-        </label>
-        <label>
-          Year: <input type="text" name="year">
+          Sector: <input type="text" name="sector" placeholder="e.g., Technology">
         </label>
         <div class="radio-group">
           <label><input type="radio" name="method-2" value="GET" checked> GET</label>
@@ -124,15 +117,16 @@
 
   <div class="endpoint">
     <div class="endpoint-header">
-      <span class="endpoint-path">/api/getFilm</span>
+      <span class="endpoint-path">/api/getCompaniesByMarketCap</span>
       <span class="method get">GET</span>
       <span class="method head">HEAD</span>
     </div>
     <div class="test-section">
       <h2>Test This Endpoint</h2>
+      <p>Get companies with market cap greater than specified value (in billions).</p>
       <form>
         <label>
-          Title: <input type="text" name="title">
+          Min Market Cap (billions): <input type="text" name="minMarketCap" placeholder="e.g., 100">
         </label>
         <div class="radio-group">
           <label><input type="radio" name="method-3" value="GET" checked> GET</label>
@@ -146,13 +140,17 @@
 
   <div class="endpoint">
     <div class="endpoint-header">
-      <span class="endpoint-path">/api/getAllFilms</span>
+      <span class="endpoint-path">/api/getCompanyBySymbol</span>
       <span class="method get">GET</span>
       <span class="method head">HEAD</span>
     </div>
     <div class="test-section">
       <h2>Test This Endpoint</h2>
+      <p>Get detailed information about a specific company by ticker symbol.</p>
       <form>
+        <label>
+          Ticker Symbol: <input type="text" name="symbol" placeholder="e.g., AAPL">
+        </label>
         <div class="radio-group">
           <label><input type="radio" name="method-4" value="GET" checked> GET</label>
           <label><input type="radio" name="method-4" value="HEAD"> HEAD</label>
@@ -165,21 +163,21 @@
 
   <div class="endpoint">
     <div class="endpoint-header">
-      <span class="endpoint-path">/api/addFilm</span>
-      <span class="method post">POST</span>
+      <span class="endpoint-path">/api/getCompaniesByIndustry</span>
+      <span class="method get">GET</span>
+      <span class="method head">HEAD</span>
     </div>
     <div class="test-section">
       <h2>Test This Endpoint</h2>
+      <p>Get companies filtered by industry (e.g., Semiconductors, Software - Infrastructure).</p>
       <form>
         <label>
-          Title: <input type="text" name="title">
+          Industry: <input type="text" name="industry" placeholder="e.g., Semiconductors">
         </label>
-        <label>
-          Year: <input type="text" name="year">
-        </label>
-        <label>
-          Actor: <input type="text" name="actor">
-        </label>
+        <div class="radio-group">
+          <label><input type="radio" name="method-5" value="GET" checked> GET</label>
+          <label><input type="radio" name="method-5" value="HEAD"> HEAD</label>
+        </div>
         <button type="button" class="send-request">Send Request</button>
       </form>
       <div class="result"></div>
@@ -188,18 +186,24 @@
 
   <div class="endpoint">
     <div class="endpoint-header">
-      <span class="endpoint-path">/api/rateFilm</span>
-      <span class="method post">POST</span>
+      <span class="endpoint-path">/api/getTopCompaniesByRevenue</span>
+      <span class="method get">GET</span>
+      <span class="method head">HEAD</span>
     </div>
     <div class="test-section">
       <h2>Test This Endpoint</h2>
+      <p>Get top companies sorted by revenue growth, optionally filtered by sector.</p>
       <form>
         <label>
-          Title: <input type="text" name="title">
+          Limit: <input type="text" name="limit" placeholder="e.g., 10">
         </label>
         <label>
-          Rating: <input type="text" name="rating">
+          Sector (optional): <input type="text" name="sector" placeholder="e.g., Technology">
         </label>
+        <div class="radio-group">
+          <label><input type="radio" name="method-6" value="GET" checked> GET</label>
+          <label><input type="radio" name="method-6" value="HEAD"> HEAD</label>
+        </div>
         <button type="button" class="send-request">Send Request</button>
       </form>
       <div class="result"></div>
