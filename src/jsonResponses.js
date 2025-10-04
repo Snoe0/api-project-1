@@ -26,7 +26,6 @@ const getBadRequest = (request, response) => {
   response.end();
 };
 
-
 const getNotFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',
@@ -38,19 +37,15 @@ const getNotFound = (request, response) => {
   response.end();
 };
 
-
 const getStocks = (request, response) => {
-  data = stocks.map(stock => ({
+  const data = stocks.map((stock) => ({
     name: stock.Longname,
-    symbol: stock.Symbol}));
+    symbol: stock.Symbol,
+  }));
   response.writeHead(200, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(data));
   response.end();
 };
-
-const getCompanies = (request, response) => {
-  
-
 
 module.exports.getSuccess = getSuccess;
 module.exports.getBadRequest = getBadRequest;

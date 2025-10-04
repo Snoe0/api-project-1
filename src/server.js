@@ -1,14 +1,11 @@
 const http = require('http');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
-const { json } = require('stream/consumers');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const onRequest = (request, response) => {
   console.log(request.url);
-
-  const acceptHeader = request.headers.accept || 'application/json';
 
   switch (request.url) {
     case '/':
