@@ -1,52 +1,76 @@
 const stocks = require('../data/sp500_companies.json');
 
-const getStocks = (request, response) => {
-  const { stocks: stocksParam } = request.query;
+const watchlists = {};
 
-  if (stocksParam && stocksParam.toLowerCase() === 'all') {
-    const allData = stocks.map((stock) => ({
-      name: stock.Longname,
-      symbol: stock.Symbol,
-      sector: stock.Sector,
-      industry: stock.Industry,
-      marketcap: stock.Marketcap,
+// GET REQUESTS
+
+// Gets all stocks, filtered by query parameters if provided.
+const getStocks = (request, response) => {
+  const {
+    stocks: stocksParam,
+    sector: sectorParam,
+    state: stateParam,
+    includeMarketcap,
+    includeSector,
+  } = request.query || {};
+
+  let filteredStocks = stocks;
+
+  // If filter parameters are provided, filter the stocks accordingly.
+  if (stocksParam) {
+    const requestedSymbols = stocksParam.split(',').map((s) => s.trim().toUpperCase());
+    filteredStocks = filteredStocks.filter((stock) => requestedSymbols.includes(stock.Symbol));
+  }
+
+  if (sectorParam) {
+    filteredStocks = filteredStocks.filter(
+      (stock) => stock.Sector && stock.Sector.toLowerCase() === sectorParam.toLowerCase(),
+    );
+  }
+
+  if (stateParam) {
+    filteredStocks = filteredStocks.filter(
+      (stock) => stock.State && stock.State.toLowerCase() === stateParam.toLowerCase(),
+    );
+  }
+
+  if (filteredStocks.length === 0) {
+    response.writeHead(404, { 'Content-Type': 'application/json' });
+    response.write(JSON.stringify({
+      message: 'No matching stocks found',
+      id: 'notFound',
     }));
-    response.writeHead(200, { 'Content-Type': 'application/json' });
-    response.write(JSON.stringify(allData));
     response.end();
     return;
   }
 
-  if (stocksParam) {
-    const requestedSymbols = stocksParam.split(',').map((s) => s.trim().toUpperCase());
-    const filteredStocks = stocks.filter((stock) => requestedSymbols.includes(stock.Symbol));
-
-    if (filteredStocks.length === 0) {
-      response.writeHead(404, { 'Content-Type': 'application/json' });
-      response.write(JSON.stringify({
-        message: 'No matching stock symbols found',
-        id: 'notFound',
-      }));
-      response.end();
-      return;
-    }
-
-    const data = filteredStocks.map((stock) => ({
+  const data = filteredStocks.map((stock) => {
+    const result = {
       name: stock.Longname,
       symbol: stock.Symbol,
-      sector: stock.Sector,
-      industry: stock.Industry,
-      marketcap: stock.Marketcap,
-    }));
-    response.writeHead(200, { 'Content-Type': 'application/json' });
-    response.write(JSON.stringify(data));
-    response.end();
-  }
+    };
+
+    if (includeMarketcap === 'true') {
+      result.marketcap = stock.Marketcap;
+    }
+
+    if (includeSector === 'true') {
+      result.sector = stock.Sector;
+    }
+
+    return result;
+  });
+
+  response.writeHead(200, { 'Content-Type': 'application/json' });
+  response.write(JSON.stringify(data));
+  response.end();
 };
 
+// Get all information on a specific stock, identified by its ticker symbol.
 const getStock = (request, response) => {
-  const { ticker } = request.query;
+  const { ticker } = request.query || {};
 
+  // If no ticker is provided, return an error.
   if (!ticker) {
     response.writeHead(400, { 'Content-Type': 'application/json' });
     response.write(JSON.stringify({
@@ -75,75 +99,43 @@ const getStock = (request, response) => {
   response.end();
 };
 
-const compareStocks = (request, response) => {
-  const { stocks: stocksParam, properties: propertiesParam } = request.query;
+// Get a watchlist by name, or all watchlists if no name is provided.
+const getWatchlist = (request, response) => {
+  const { name } = request.query || {};
 
-  if (!stocksParam) {
-    response.writeHead(400, { 'Content-Type': 'application/json' });
-    response.write(JSON.stringify({
-      message: 'Missing required query parameter: stocks',
-      id: 'missingParams',
-    }));
+  // If no name is provided, return all watchlists.
+  if (!name) {
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.write(JSON.stringify(watchlists));
     response.end();
     return;
   }
 
-  const stockSymbols = stocksParam.split(',').map((s) => s.trim().toUpperCase());
+  const watchlist = watchlists[name];
 
-  if (stockSymbols.length < 2) {
-    response.writeHead(400, { 'Content-Type': 'application/json' });
-    response.write(JSON.stringify({
-      message: 'At least 2 stock symbols are required for comparison',
-      id: 'insufficientStocks',
-    }));
-    response.end();
-    return;
-  }
-
-  const defaultProperties = ['Longname', 'Symbol', 'Sector', 'Industry', 'Marketcap'];
-  const properties = propertiesParam
-    ? propertiesParam.split(',').map((p) => p.trim())
-    : defaultProperties;
-
-  const stockDataArray = stockSymbols.map((symbol) => ({
-    symbol,
-    data: stocks.find((stock) => stock.Symbol === symbol),
-  }));
-
-  const notFound = stockDataArray.filter((item) => !item.data);
-  if (notFound.length > 0) {
+  if (!watchlist) {
     response.writeHead(404, { 'Content-Type': 'application/json' });
     response.write(JSON.stringify({
-      message: 'One or more stock symbols not found',
+      message: 'Watchlist not found',
       id: 'notFound',
-      notFoundSymbols: notFound.map((item) => item.symbol),
+      name,
     }));
     response.end();
     return;
   }
 
-  const comparisonData = {};
-  stockDataArray.forEach((item, index) => {
-    const stockKey = `stock${index + 1}`;
-    comparisonData[stockKey] = {};
-
-    properties.forEach((prop) => {
-      if (item.data[prop] !== undefined) {
-        comparisonData[stockKey][prop] = item.data[prop];
-      }
-    });
-  });
-
   response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.write(JSON.stringify(comparisonData));
+  response.write(JSON.stringify(watchlist));
   response.end();
 };
 
+// get sector information, either for a specific sector or all sectors.
 const getSectors = (request, response) => {
-  const { sector } = request.query;
+  const { sector } = request.query || {};
 
   const sectorData = {};
 
+  // For each sector, start out all information at 0, add to it as each stock is processed.
   stocks.forEach((stock) => {
     const sectorName = stock.Sector;
     if (!sectorName) return;
@@ -169,11 +161,10 @@ const getSectors = (request, response) => {
       sectorData[sectorName].totalRevenuegrowth += stock.Revenuegrowth;
     }
 
+    // List of companies in the sector.
     sectorData[sectorName].companies.push({
       symbol: stock.Symbol,
       name: stock.Longname,
-      marketcap: stock.Marketcap,
-      industry: stock.Industry,
     });
 
     const industry = stock.Industry;
@@ -192,6 +183,7 @@ const getSectors = (request, response) => {
     data.averageRevenuegrowth = data.count > 0 ? data.totalRevenuegrowth / data.count : 0;
   });
 
+  // If a specific sector is requested, return only that sector's data, else return all sectors.
   if (sector) {
     const requestedSector = Object.keys(sectorData).find(
       (key) => key.toLowerCase() === sector.toLowerCase(),
@@ -219,7 +211,152 @@ const getSectors = (request, response) => {
   response.end();
 };
 
+// POST REQUESTS
+// Create a new watchlist with a given name and optional list of stock tickers.
+const makeWatchlist = (request, response, body) => {
+  const { name, tickers } = body;
+
+  if (!name) {
+    response.writeHead(400, { 'Content-Type': 'application/json' });
+    response.write(JSON.stringify({
+      message: 'Missing required field: name',
+      id: 'missingParams',
+    }));
+    response.end();
+    return;
+  }
+
+  if (watchlists[name]) {
+    response.writeHead(400, { 'Content-Type': 'application/json' });
+    response.write(JSON.stringify({
+      message: 'Watchlist with this name already exists',
+      id: 'duplicateName',
+    }));
+    response.end();
+    return;
+  }
+
+  const stocksData = [];
+  const invalidTickers = [];
+
+  // Push specific stocks data to the watchlist, if provided.
+  if (tickers) {
+    const tickerArray = Array.isArray(tickers) ? tickers : tickers.split(',').map((t) => t.trim());
+
+    tickerArray.forEach((ticker) => {
+      const stockData = stocks.find((stock) => stock.Symbol === ticker.toUpperCase());
+      if (stockData) {
+        stocksData.push(stockData);
+      } else {
+        invalidTickers.push(ticker.toUpperCase());
+      }
+    });
+  }
+
+  watchlists[name] = {
+    name,
+    stocks: stocksData,
+    createdAt: new Date().toISOString(),
+  };
+
+  const responseData = {
+    message: 'Watchlist created successfully',
+    watchlist: {
+      name,
+      stockCount: stocksData.length,
+      stocks: stocksData.map((stock) => ({
+        symbol: stock.Symbol,
+        name: stock.Longname,
+      })),
+    },
+  };
+
+  if (invalidTickers.length > 0) {
+    responseData.warning = `Some tickers were not found: ${invalidTickers.join(', ')}`;
+  }
+
+  response.writeHead(201, { 'Content-Type': 'application/json' });
+  response.write(JSON.stringify(responseData));
+  response.end();
+};
+
+// Add stocks to an existing watchlist by name, using a list of tickers.
+const addToWatchlist = (request, response, body) => {
+  const { name, tickers } = body;
+
+  if (!name || !tickers) {
+    response.writeHead(400, { 'Content-Type': 'application/json' });
+    response.write(JSON.stringify({
+      message: 'Missing required fields: name and tickers',
+      id: 'missingParams',
+    }));
+    response.end();
+    return;
+  }
+
+  if (!watchlists[name]) {
+    response.writeHead(404, { 'Content-Type': 'application/json' });
+    response.write(JSON.stringify({
+      message: 'Watchlist not found',
+      id: 'notFound',
+      name,
+    }));
+    response.end();
+    return;
+  }
+
+  const tickerArray = Array.isArray(tickers) ? tickers : tickers.split(',').map((t) => t.trim());
+  const existingSymbols = watchlists[name].stocks.map((stock) => stock.Symbol);
+  const addedStocks = [];
+  const duplicates = [];
+  const invalidTickers = [];
+
+  tickerArray.forEach((ticker) => {
+    const upperTicker = ticker.toUpperCase();
+
+    if (existingSymbols.includes(upperTicker)) {
+      duplicates.push(upperTicker);
+      return;
+    }
+
+    const stockData = stocks.find((stock) => stock.Symbol === upperTicker);
+    if (stockData) {
+      watchlists[name].stocks.push(stockData);
+      addedStocks.push(stockData);
+    } else {
+      invalidTickers.push(upperTicker);
+    }
+  });
+
+  const responseData = {
+    message: 'Stocks processed',
+    watchlist: {
+      name,
+      stockCount: watchlists[name].stocks.length,
+      addedCount: addedStocks.length,
+      addedStocks: addedStocks.map((stock) => ({
+        symbol: stock.Symbol,
+        name: stock.Longname,
+      })),
+    },
+  };
+
+  if (duplicates.length > 0) {
+    responseData.duplicates = duplicates;
+  }
+
+  if (invalidTickers.length > 0) {
+    responseData.invalidTickers = invalidTickers;
+  }
+
+  response.writeHead(201, { 'Content-Type': 'application/json' });
+  response.write(JSON.stringify(responseData));
+  response.end();
+};
+
 module.exports.getStocks = getStocks;
 module.exports.getStock = getStock;
-module.exports.getCompare = compareStocks;
+module.exports.getWatchlist = getWatchlist;
 module.exports.getSectors = getSectors;
+module.exports.makeWatchlist = makeWatchlist;
+module.exports.addToWatchlist = addToWatchlist;

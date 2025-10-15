@@ -3,216 +3,242 @@
 
 <head>
   <title>SP500 Companies API Test Application</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" type="text/css" href="/style.css">
-
-  <script>
-    const init = () => {
-      // Toggle endpoint sections
-      const endpointHeaders = document.querySelectorAll('.endpoint-header');
-      endpointHeaders.forEach(header => {
-        header.addEventListener('click', () => {
-          const endpoint = header.parentElement;
-          const testSection = endpoint.querySelector('.test-section');
-          if (testSection) {
-            testSection.classList.toggle('expanded');
-          }
-        });
-      });
-
-      // Handle form submissions
-      const sendButtons = document.querySelectorAll('.send-request');
-      sendButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const form = button.closest('form');
-          const endpoint = button.closest('.endpoint');
-          const resultDiv = endpoint.querySelector('.result');
-          const endpointPath = endpoint.querySelector('.endpoint-path').textContent;
-
-          // Get form data
-          const inputs = form.querySelectorAll('input[type="text"]');
-          const methodRadios = form.querySelectorAll('input[name^="method"]');
-
-          let method = 'GET';
-          methodRadios.forEach(radio => {
-            if (radio.checked) method = radio.value;
-          });
-
-          // Build URL with query params
-          let url = endpointPath;
-          const params = new URLSearchParams();
-          inputs.forEach(input => {
-            if (input.value) {
-              params.append(input.name, input.value);
-            }
-          });
-          if (params.toString()) url += '?' + params.toString();
-
-          // Make request
-          fetch(url, { method })
-            .then(response => response.text())
-            .then(data => {
-              resultDiv.textContent = data;
-            })
-            .catch(error => {
-              resultDiv.textContent = `Error: ${error}`;
-            });
-        });
-      });
-    };
-
-    window.onload = init;
-  </script>
+  <script src="/client.js"></script>
 </head>
 
 <body>
-  <div class="header-links">
-    <a href="/">Test the Application Here</a>
-    <a href="/docs">View the Documentation Here</a>
-  </div>
+  <section class="section">
+    <div class="container">
+      <div class="tabs is-centered">
+        <ul>
+          <li class="is-active"><a href="/">Test Application</a></li>
+          <li><a href="/docs">Documentation</a></li>
+        </ul>
+      </div>
 
-  <h1>SP500 Companies API Test Application</h1>
+      <h1 class="title is-2 has-text-centered">SP500 Companies API Test Application</h1>
 
-  <div class="endpoint">
-    <div class="endpoint-header">
-      <span class="endpoint-path">/api/getStock</span>
-      <span class="method get">GET</span>
-      <span class="method head">HEAD</span>
-    </div>
-    <div class="test-section">
-      <h2>Test This Endpoint</h2>
-      <p>Get a specific SP500 company by its ticker symbol.</p>
-      <form>
-        <div class="radio-group">
-          <label><input type="radio" name="method-1" value="GET" checked> GET</label>
-          <label><input type="radio" name="method-1" value="HEAD"> HEAD</label>
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getStocks</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
         </div>
-        <button type="button" class="send-request">Send Request</button>
-      </form>
-      <div class="result"></div>
-    </div>
-  </div>
-
-  <div class="endpoint">
-    <div class="endpoint-header">
-      <span class="endpoint-path">/api/getCompaniesBySector</span>
-      <span class="method get">GET</span>
-      <span class="method head">HEAD</span>
-    </div>
-    <div class="test-section">
-      <h2>Test This Endpoint</h2>
-      <p>Get companies filtered by sector (e.g., Technology, Healthcare, Financials).</p>
-      <form>
-        <label>
-          Sector: <input type="text" name="sector" placeholder="e.g., Technology">
-        </label>
-        <div class="radio-group">
-          <label><input type="radio" name="method-2" value="GET" checked> GET</label>
-          <label><input type="radio" name="method-2" value="HEAD"> HEAD</label>
+        <div class="test-section">
+          <h2 class="subtitle is-5">Test This Endpoint</h2>
+          <p>Get all stocks (name and ticker). Filter by specific stocks, sectors, or states. Optionally include market cap and sector.</p>
+          <form>
+            <div class="field">
+              <label class="label">Stocks (optional)</label>
+              <div class="control">
+                <input class="input" type="text" name="stocks" placeholder="e.g., AAPL,MSFT">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Sector (optional)</label>
+              <div class="control">
+                <input class="input" type="text" name="sector" placeholder="e.g., Technology">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">State (optional)</label>
+              <div class="control">
+                <input class="input" type="text" name="state" placeholder="e.g., CA">
+              </div>
+            </div>
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" name="includeMarketcap" value="true"> Include Market Cap
+              </label>
+            </div>
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" name="includeSector" value="true"> Include Sector
+              </label>
+            </div>
+            <div class="field">
+              <div class="control radio-group">
+                <label class="radio"><input type="radio" name="method-1" value="GET" checked> GET</label>
+                <label class="radio"><input type="radio" name="method-1" value="HEAD"> HEAD</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="button" class="button is-primary send-request">Send Request</button>
+              </div>
+            </div>
+          </form>
+          <div class="notification result"></div>
         </div>
-        <button type="button" class="send-request">Send Request</button>
-      </form>
-      <div class="result"></div>
-    </div>
-  </div>
+      </div>
 
-  <div class="endpoint">
-    <div class="endpoint-header">
-      <span class="endpoint-path">/api/getCompaniesByMarketCap</span>
-      <span class="method get">GET</span>
-      <span class="method head">HEAD</span>
-    </div>
-    <div class="test-section">
-      <h2>Test This Endpoint</h2>
-      <p>Get companies with market cap greater than specified value (in billions).</p>
-      <form>
-        <label>
-          Min Market Cap (billions): <input type="text" name="minMarketCap" placeholder="e.g., 100">
-        </label>
-        <div class="radio-group">
-          <label><input type="radio" name="method-3" value="GET" checked> GET</label>
-          <label><input type="radio" name="method-3" value="HEAD"> HEAD</label>
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getStock</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
         </div>
-        <button type="button" class="send-request">Send Request</button>
-      </form>
-      <div class="result"></div>
-    </div>
-  </div>
-
-  <div class="endpoint">
-    <div class="endpoint-header">
-      <span class="endpoint-path">/api/compare</span>
-      <span class="method get">GET</span>
-      <span class="method head">HEAD</span>
-    </div>
-    <div class="test-section">
-      <h2>Test This Endpoint</h2>
-      <p>Compare information about multiple symbols.</p>
-      <form>
-        <label>
-          Ticker Symbols (comma-separated): <input type="text" name="symbols" placeholder="e.g., AAPL,MSFT">
-        </label>
-        <div class="radio-group">
-          <label><input type="radio" name="method-4" value="GET" checked> GET</label>
-          <label><input type="radio" name="method-4" value="HEAD"> HEAD</label>
+        <div class="test-section">
+          <h2 class="subtitle is-5">Test This Endpoint</h2>
+          <p>Get complete information about a specific stock by ticker symbol.</p>
+          <form>
+            <div class="field">
+              <label class="label">Ticker</label>
+              <div class="control">
+                <input class="input" type="text" name="ticker" placeholder="e.g., AAPL">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control radio-group">
+                <label class="radio"><input type="radio" name="method-2" value="GET" checked> GET</label>
+                <label class="radio"><input type="radio" name="method-2" value="HEAD"> HEAD</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="button" class="button is-primary send-request">Send Request</button>
+              </div>
+            </div>
+          </form>
+          <div class="notification result"></div>
         </div>
-        <button type="button" class="send-request">Send Request</button>
-      </form>
-      <div class="result"></div>
-    </div>
-  </div>
+      </div>
 
-  <div class="endpoint">
-    <div class="endpoint-header">
-      <span class="endpoint-path">/api/getCompaniesByIndustry</span>
-      <span class="method get">GET</span>
-      <span class="method head">HEAD</span>
-    </div>
-    <div class="test-section">
-      <h2>Test This Endpoint</h2>
-      <p>Get companies filtered by industry (e.g., Semiconductors, Software - Infrastructure).</p>
-      <form>
-        <label>
-          Industry: <input type="text" name="industry" placeholder="e.g., Semiconductors">
-        </label>
-        <div class="radio-group">
-          <label><input type="radio" name="method-5" value="GET" checked> GET</label>
-          <label><input type="radio" name="method-5" value="HEAD"> HEAD</label>
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getWatchlist</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
         </div>
-        <button type="button" class="send-request">Send Request</button>
-      </form>
-      <div class="result"></div>
-    </div>
-  </div>
-
-  <div class="endpoint">
-    <div class="endpoint-header">
-      <span class="endpoint-path">/api/getTopCompaniesByRevenue</span>
-      <span class="method get">GET</span>
-      <span class="method head">HEAD</span>
-    </div>
-    <div class="test-section">
-      <h2>Test This Endpoint</h2>
-      <p>Get top companies sorted by revenue growth, optionally filtered by sector.</p>
-      <form>
-        <label>
-          Limit: <input type="text" name="limit" placeholder="e.g., 10">
-        </label>
-        <label>
-          Sector (optional): <input type="text" name="sector" placeholder="e.g., Technology">
-        </label>
-        <div class="radio-group">
-          <label><input type="radio" name="method-6" value="GET" checked> GET</label>
-          <label><input type="radio" name="method-6" value="HEAD"> HEAD</label>
+        <div class="test-section">
+          <h2 class="subtitle is-5">Test This Endpoint</h2>
+          <p>Retrieve an existing watchlist with all its stocks and information.</p>
+          <form>
+            <div class="field">
+              <label class="label">Watchlist Name</label>
+              <div class="control">
+                <input class="input" type="text" name="name" placeholder="e.g., My Tech Stocks">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control radio-group">
+                <label class="radio"><input type="radio" name="method-3" value="GET" checked> GET</label>
+                <label class="radio"><input type="radio" name="method-3" value="HEAD"> HEAD</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="button" class="button is-primary send-request">Send Request</button>
+              </div>
+            </div>
+          </form>
+          <div class="notification result"></div>
         </div>
-        <button type="button" class="send-request">Send Request</button>
-      </form>
-      <div class="result"></div>
-    </div>
-  </div>
+      </div>
 
-  <footer>
-    Yuri Korolev - 2025 - IGME 430 Project 1
-  </footer>
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getSectors</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
+        </div>
+        <div class="test-section">
+          <h2 class="subtitle is-5">Test This Endpoint</h2>
+          <p>Get aggregated sector information. Optional: specify a specific sector.</p>
+          <form>
+            <div class="field">
+              <label class="label">Sector (optional)</label>
+              <div class="control">
+                <input class="input" type="text" name="sector" placeholder="e.g., Technology">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control radio-group">
+                <label class="radio"><input type="radio" name="method-4" value="GET" checked> GET</label>
+                <label class="radio"><input type="radio" name="method-4" value="HEAD"> HEAD</label>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="button" class="button is-primary send-request">Send Request</button>
+              </div>
+            </div>
+          </form>
+          <div class="notification result"></div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/makeWatchlist</span>
+          <span class="tag is-danger method post">POST</span>
+        </div>
+        <div class="test-section">
+          <h2 class="subtitle is-5">Test This Endpoint</h2>
+          <p>Create a new watchlist with an optional starting set of tickers.</p>
+          <form>
+            <div class="field">
+              <label class="label">Name</label>
+              <div class="control">
+                <input class="input" type="text" name="name" placeholder="e.g., My Tech Stocks">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Tickers (optional)</label>
+              <div class="control">
+                <input class="input" type="text" name="tickers" placeholder="e.g., AAPL,MSFT">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="button" class="button is-primary send-post-request">Send Request</button>
+              </div>
+            </div>
+          </form>
+          <div class="notification result"></div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/addToWatchlist</span>
+          <span class="tag is-danger method post">POST</span>
+        </div>
+        <div class="test-section">
+          <h2 class="subtitle is-5">Test This Endpoint</h2>
+          <p>Add tickers to an existing watchlist (no duplicates).</p>
+          <form>
+            <div class="field">
+              <label class="label">Watchlist Name</label>
+              <div class="control">
+                <input class="input" type="text" name="name" placeholder="e.g., My Tech Stocks">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Tickers</label>
+              <div class="control">
+                <input class="input" type="text" name="tickers" placeholder="e.g., GOOGL,META">
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="button" class="button is-primary send-post-request">Send Request</button>
+              </div>
+            </div>
+          </form>
+          <div class="notification result"></div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="content has-text-centered">
+          <p>Yuri Korolev - 2025 - IGME 430 Project 1</p>
+        </div>
+      </footer>
+    </div>
+  </section>
 </body>
 
 </html>

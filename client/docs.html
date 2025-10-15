@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>SP500 Companies API Documentation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  <script src="/docs.js"></script>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="tabs is-centered">
+        <ul>
+          <li><a href="/">Test Application</a></li>
+          <li class="is-active"><a href="/docs">Documentation</a></li>
+        </ul>
+      </div>
+
+      <h1 class="title is-2 has-text-centered">SP500 Companies API Documentation</h1>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getStocks</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
+        </div>
+        <div class="docs-section">
+          <h2 class="subtitle is-5">Query Params</h2>
+          <div class="content">
+            <p><code>stocks</code> (optional) - Comma-separated ticker symbols to filter.</p>
+            <p><code>sector</code> (optional) - Sector name to filter by.</p>
+            <p><code>state</code> (optional) - State abbreviation to filter by.</p>
+            <p><code>includeMarketcap</code> (optional) - Set to "true" to include market cap in response.</p>
+            <p><code>includeSector</code> (optional) - Set to "true" to include sector in response.</p>
+          </div>
+
+          <h2 class="subtitle is-5">Returns</h2>
+          <div class="content">
+            <p>A JSON array of stock objects with name and symbol. Additional fields included if requested.</p>
+            <p>Format: <code>[{ name: string, symbol: string, marketcap?: number, sector?: string }]</code></p>
+          </div>
+
+          <h2 class="subtitle is-5">Examples</h2>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getStocks</code></p>
+            <p><strong>Result:</strong> <code>[{ name: 'Apple Inc.', symbol: 'AAPL' }, { name: 'Microsoft Corporation', symbol: 'MSFT' }, ...]</code></p>
+          </div>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getStocks?sector=Technology&includeMarketcap=true</code></p>
+            <p><strong>Result:</strong> <code>[{ name: 'Apple Inc.', symbol: 'AAPL', marketcap: 3846819807232 }, ...]</code></p>
+          </div>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getStocks?state=CA&includeSector=true</code></p>
+            <p><strong>Result:</strong> <code>[{ name: 'Apple Inc.', symbol: 'AAPL', sector: 'Technology' }, ...]</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getStock</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
+        </div>
+        <div class="docs-section">
+          <h2 class="subtitle is-5">Query Params</h2>
+          <div class="content">
+            <p><code>ticker</code> (required) - A stock ticker symbol to retrieve.</p>
+          </div>
+
+          <h2 class="subtitle is-5">Returns</h2>
+          <div class="content">
+            <p>A JSON object with complete stock information.</p>
+            <p>Format: <code>{ Exchange: string, Symbol: string, Longname: string, Sector: string, Industry: string, Marketcap: number, Ebitda: number, Revenuegrowth: number, City: string, State: string, Country: string, Fulltimeemployees: number, Longbusinesssummary: string, Weight: number }</code></p>
+          </div>
+
+          <h2 class="subtitle is-5">Examples</h2>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getStock?ticker=AAPL</code></p>
+            <p><strong>Result:</strong> <code>{ Exchange: 'NMS', Symbol: 'AAPL', Longname: 'Apple Inc.', Sector: 'Technology', Industry: 'Consumer Electronics', Marketcap: 3846819807232, ... }</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getWatchlist</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
+        </div>
+        <div class="docs-section">
+          <h2 class="subtitle is-5">Query Params</h2>
+          <div class="content">
+            <p><code>name</code> (required) - The name of the watchlist to retrieve.</p>
+          </div>
+
+          <h2 class="subtitle is-5">Returns</h2>
+          <div class="content">
+            <p>A JSON object with complete watchlist data including all stock information.</p>
+            <p>Format: <code>{ name: string, stocks: [{ Exchange: string, Symbol: string, Longname: string, Sector: string, Industry: string, Marketcap: number, ... }], createdAt: string }</code></p>
+          </div>
+
+          <h2 class="subtitle is-5">Examples</h2>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getWatchlist?name=Tech Giants</code></p>
+            <p><strong>Result:</strong> <code>{ name: 'Tech Giants', stocks: [{ Exchange: 'NMS', Symbol: 'AAPL', Longname: 'Apple Inc.', Sector: 'Technology', ... }, { Symbol: 'MSFT', Longname: 'Microsoft Corporation', ... }], createdAt: '2025-01-15T10:30:00.000Z' }</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/getSectors</span>
+          <span class="tag is-info method get">GET</span>
+          <span class="tag is-link method head">HEAD</span>
+        </div>
+        <div class="docs-section">
+          <h2 class="subtitle is-5">Query Params</h2>
+          <div class="content">
+            <p><code>sector</code> (optional) - A specific sector name to retrieve aggregated data for.</p>
+          </div>
+
+          <h2 class="subtitle is-5">Returns</h2>
+          <div class="content">
+            <p>A JSON array of sector objects (or single object if sector specified) with aggregated information.</p>
+            <p>Format: <code>[{ sector: string, count: number, totalMarketcap: number, averageMarketcap: number, totalEmployees: number, averageEmployees: number, totalRevenuegrowth: number, averageRevenuegrowth: number, industries: { [industry]: count } }]</code></p>
+          </div>
+
+          <h2 class="subtitle is-5">Examples</h2>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getSectors</code></p>
+            <p><strong>Result:</strong> <code>[{ sector: 'Technology', count: 75, totalMarketcap: 15234567890, averageMarketcap: 203127571.87, ... }, { sector: 'Healthcare', ... }]</code></p>
+          </div>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>/getSectors?sector=Technology</code></p>
+            <p><strong>Result:</strong> <code>{ sector: 'Technology', count: 75, totalMarketcap: 15234567890, industries: { 'Consumer Electronics': 3, 'Semiconductors': 10, ... } }</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/makeWatchlist</span>
+          <span class="tag is-danger method post">POST</span>
+        </div>
+        <div class="docs-section">
+          <h2 class="subtitle is-5">Body Params</h2>
+          <div class="content">
+            <p><code>name</code> (required) - Name of the watchlist to create.</p>
+            <p><code>tickers</code> (optional) - Comma-separated ticker symbols or array to add initially.</p>
+          </div>
+
+          <h2 class="subtitle is-5">Returns</h2>
+          <div class="content">
+            <p>A JSON object with creation status and watchlist details.</p>
+            <p>Format: <code>{ message: string, watchlist: { name: string, stockCount: number, stocks: [{ symbol: string, name: string }] }, warning?: string }</code></p>
+          </div>
+
+          <h2 class="subtitle is-5">Examples</h2>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>POST /makeWatchlist</code></p>
+            <p><strong>Body:</strong> <code>{ "name": "Tech Giants", "tickers": "AAPL,MSFT,GOOGL" }</code></p>
+            <p><strong>Result:</strong> <code>{ message: 'Watchlist created successfully', watchlist: { name: 'Tech Giants', stockCount: 3, stocks: [{ symbol: 'AAPL', name: 'Apple Inc.' }, ...] } }</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="box endpoint">
+        <div class="endpoint-header">
+          <span class="endpoint-path">/addToWatchlist</span>
+          <span class="tag is-danger method post">POST</span>
+        </div>
+        <div class="docs-section">
+          <h2 class="subtitle is-5">Body Params</h2>
+          <div class="content">
+            <p><code>name</code> (required) - Name of the existing watchlist.</p>
+            <p><code>tickers</code> (required) - Comma-separated ticker symbols or array to add.</p>
+          </div>
+
+          <h2 class="subtitle is-5">Returns</h2>
+          <div class="content">
+            <p>A JSON object with processing status and updated watchlist details.</p>
+            <p>Format: <code>{ message: string, watchlist: { name: string, stockCount: number, addedCount: number, addedStocks: [{ symbol: string, name: string }] }, duplicates?: [string], invalidTickers?: [string] }</code></p>
+          </div>
+
+          <h2 class="subtitle is-5">Examples</h2>
+          <div class="notification is-dark example-box">
+            <p><strong>Request:</strong> <code>POST /addToWatchlist</code></p>
+            <p><strong>Body:</strong> <code>{ "name": "Tech Giants", "tickers": "NVDA,META" }</code></p>
+            <p><strong>Result:</strong> <code>{ message: 'Stocks processed', watchlist: { name: 'Tech Giants', stockCount: 5, addedCount: 2, addedStocks: [{ symbol: 'NVDA', name: 'NVIDIA Corporation' }, ...] } }</code></p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="content has-text-centered">
+          <p>Yuri Korolev - 2025 - IGME 430 Project 1</p>
+        </div>
+      </footer>
+    </div>
+  </section>
+</body>
+
+</html>
